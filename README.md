@@ -1,3 +1,5 @@
+> Production-readiness fork of https://github.com/sellwane7/deskflow (GitHub doesn't allow forking my own repo, so this is a full copy with history).
+
 # DeskFlow — Internal IT Service Request Portal
 
 A full-stack ticketing system for employees to report IT issues and admins to
