@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: deskflow-backend-secret
+  namespace: deskflow
+type: Opaque
+stringData:
+  JWT_SECRET: change-me-before-applying   # replace, or create with kubectl create secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: deskflow
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: backend }
+  template:
+    metadata:
+      labels: { app: backend }
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/sellwane7/deskflow-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - { name: PORT, value: "5000" }
+            - { name: NODE_ENV, value: production }
+            - { name: MONGO_URI, value: "mongodb://mongo:27017/deskflow" }
+            - { name: CLIENT_ORIGIN, value: "http://localhost:3000" }
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: deskflow-backend-secret
+                  key: JWT_SECRET
+          livenessProbe:
+            httpGet: { path: /api/health, port: 5000 }
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet: { path: /api/ready, port: 5000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests: { cpu: 50m, memory: 96Mi }
+            limits: { cpu: 300m, memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: deskflow
+spec:
+  selector: { app: backend }
+  ports:
+    - port: 5000
+      targetPort: 5000
