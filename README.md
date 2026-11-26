@@ -67,3 +67,20 @@ npm start                   # starts on http://localhost:3000
 ## Author
 
 **Joyce Sellwane Mosia**
+
+## Production readiness
+
+This fork extends DeskFlow with tests, containers, CI/CD and Kubernetes deployment. Note that DeskFlow uses MongoDB, so the stack runs `mongo:7` in place of Postgres.
+
+| Area | Where |
+|---|---|
+| Test plan | [docs/TEST_PLAN.md](docs/TEST_PLAN.md) |
+| Setup guide (tests, Docker Compose, Kubernetes) | [docs/SETUP.md](docs/SETUP.md) |
+| Architecture and CI/CD diagrams | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| CI pipeline | [.github/workflows/ci.yml](.github/workflows/ci.yml) |
+| CD pipeline (images to GHCR) | [.github/workflows/cd.yml](.github/workflows/cd.yml) |
+| Kubernetes manifests | [k8s/](k8s/) |
+
+Health checks: liveness `GET /api/health`, readiness `GET /api/ready` (503 until MongoDB is connected).
+
+Demo video: <paste the link here>
